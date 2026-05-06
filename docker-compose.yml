@@ -1,0 +1,82 @@
+version: '3.9'
+
+# ─────────────────────────────────────────────────────────────────────────────
+# HomeHive — Local Development Stack
+# Run:  docker-compose up -d
+# Stop: docker-compose down
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── MongoDB (local dev — no Atlas account required) ───────────────────────
+  mongo:
+    image: mongo:7
+    container_name: uc-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: Urban_Crap
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ── Redis ──────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7.2-alpine
+    container_name: uc-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  # ── Redis Insight (visual Redis inspector) ────────────────────────────────
+  # Visit http://localhost:8001 to inspect cached keys visually
+  redis-insight:
+    image: redislabs/redisinsight:latest
+    container_name: uc-redis-insight
+    ports:
+      - "8001:8001"
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  # ── Spring Boot Backend ───────────────────────────────────────────────────
+  # Uncomment to run the backend in Docker (requires `mvn package -DskipTests` first)
+  # backend:
+  #   build:
+  #     context: ./UC-Backend
+  #     dockerfile: Dockerfile
+  #   container_name: uc-backend
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     - MONGO_URI=mongodb://mongo:27017/Urban_Crap   # ← uses local mongo container
+  #     - JWT_SECRET=${JWT_SECRET}
+  #     - REDIS_HOST=redis
+  #     - REDIS_PORT=6379
+  #     - AI_SERVICE_URL=http://ai-service:8000
+  #     - AI_SERVICE_API_KEY=${AI_SERVICE_API_KEY}
+  #   depends_on:
+  #     mongo:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+  #   restart: unless-stopped
+
+volumes:
+  mongo_data:
+    driver: local
+  redis_data:
+    driver: local

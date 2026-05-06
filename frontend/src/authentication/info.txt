@@ -1,0 +1,3 @@
+This page contains the options to choose i.e., if the user is admin or service agent or customer.
+Based on the user input(say customer), it will then redirect the page to respective signIn/sighUp pages(for customer here) which are located inside the respective folder(customer here).
+Also, service agent and Admin will only have the signIn page and not the signUp page. The admin will have the authority to add new service agents.

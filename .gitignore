@@ -1,0 +1,17 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# HomeHive — Root .gitignore
+# ──────────────────────────────────────────────────────────────────────────────
+
+# NEVER commit secrets
+.env
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+
+# Misc
+Untitled.txt
