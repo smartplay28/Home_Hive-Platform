@@ -123,22 +123,24 @@ public class ServiceAgent extends User implements Serializable {
 
     /** Add a new pending order reference */
     public void addPendingOrderId(int orderId) {
-        if (!pendingOrderIds.contains(orderId)) {
-            pendingOrderIds.add(orderId);
+        String idStr = String.valueOf(orderId);
+        if (!pendingOrderIds.contains(idStr)) {
+            pendingOrderIds.add(idStr);
         }
     }
 
     /** Move order from pending → completed */
     public void completeOrder(int orderId) {
-        pendingOrderIds.remove(orderId);
-        if (!completedOrderIds.contains(orderId)) {
-            completedOrderIds.add(orderId);
+        String idStr = String.valueOf(orderId);
+        pendingOrderIds.remove(idStr);
+        if (!completedOrderIds.contains(idStr)) {
+            completedOrderIds.add(idStr);
         }
     }
 
     /** Remove a rejected/cancelled order from pending */
     public void removePendingOrder(int orderId) {
-        pendingOrderIds.remove(orderId);
+        pendingOrderIds.remove(String.valueOf(orderId));
     }
 
     /**
