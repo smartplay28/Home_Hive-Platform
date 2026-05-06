@@ -33,8 +33,7 @@ build/
 .vscode/
 
 ### Sensitive Files — NEVER commit these ###
-# application.properties contains MONGO_URI and JWT_SECRET at runtime
-src/main/resources/application.properties
+# application.properties contains placeholders, it is safe to commit.
 # Root-level .env file
 ../.env
 .env
