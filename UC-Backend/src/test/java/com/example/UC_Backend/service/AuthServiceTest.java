@@ -100,26 +100,15 @@ class AuthServiceTest {
     @Test
     void loginAdmin_Success() {
         LoginRequest req = new LoginRequest("admin@example.com", "password");
-        Admin admin = new Admin(1, "Admin", "admin@example.com", "hashed_password", "SECRET123");
+        Admin admin = new Admin(1, "Admin", "admin@example.com", "hashed_password", "");
         
         when(adminRepo.findByEmail(req.email())).thenReturn(Optional.of(admin));
         when(passwordEncoder.matches(req.password(), admin.getPassword())).thenReturn(true);
         when(jwtTokenProvider.generateAccessToken(anyString(), anyString(), anyInt())).thenReturn("access_token");
 
-        LoginResponse response = authService.loginAdmin(req, "SECRET123");
+        LoginResponse response = authService.loginAdmin(req);
 
         assertNotNull(response);
         assertEquals("ADMIN", response.role());
-    }
-
-    @Test
-    void loginAdmin_WrongAccessCode_ThrowsUnauthorized() {
-        LoginRequest req = new LoginRequest("admin@example.com", "password");
-        Admin admin = new Admin(1, "Admin", "admin@example.com", "hashed_password", "SECRET123");
-        
-        when(adminRepo.findByEmail(req.email())).thenReturn(Optional.of(admin));
-        when(passwordEncoder.matches(req.password(), admin.getPassword())).thenReturn(true);
-
-        assertThrows(UnauthorizedException.class, () -> authService.loginAdmin(req, "WRONG"));
     }
 }
